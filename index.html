@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="underscore-min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="cardGame.js"></script>
+    <script type="text/javascript" src="cardGameUI.js"></script>
+    <style>
+    .card {background-color: gray; padding: 2px;}
+    #filler {padding: 2px;}
+    </style>
+  </head>
+
+  <body>
+    <h2>Card Game</h2>
+    <div class="wrapper">
+      <div id="toprow">
+        <svg id="filler" width="180" height="300"></svg>
+        <svg class="card" id="top" width="180" height="300"></svg>
+      </div>
+      <div>
+        <svg class="card" id="left" width="180" height="300"></svg>
+        <svg class="card" id="middle" width="180" height="300"></svg>
+        <svg class="card" id="right" width="180" height="300"></svg>
+      </div>
+    </div>
+    <div class="results"></div>
+  </body>
+</html>
