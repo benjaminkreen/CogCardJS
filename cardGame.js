@@ -12,6 +12,14 @@ var SHAPES = [
 	"circle"
 ]
 
+function Result (options){
+	var options = options || {}
+	this.reactionTime = options.reactionTime;
+	this.rule = options.rule;
+	this.hit = options.hit;
+}
+
+
 function Card (options){
 	var options = options || {}
 	this.color = options.color;
@@ -29,7 +37,7 @@ Card.prototype.randomCard = function(){
 function Trial (){
 	this.table = [],
 	this.hand = [],
-	this.metrics = {}
+	this.startTime = new Date().getTime()
 }
 
 Trial.prototype.setTrial = function(){
