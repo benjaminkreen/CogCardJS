@@ -70,17 +70,50 @@ View.prototype.validateResponse = function(card){
 			resOptions.hit = false;
 		}
 	break;
-	}
-	console.log(resOptions)
-	
+	}	
 	var res =  new Result(resOptions);
 	this.results.push(res);
+	
 	if(this.results.length < 10){
 		this.trial = new Trial().setTrial()
 		this.render();
 	} else {
-		console.log(this.results);
+		this.showResults()
 	}
+}
+
+View.prototype.showResults = function(){
+	d3.selectAll('.cardrow svg').remove()
+	console.log(this.results);
+	var rxnTimes = []
+	for(var i = 0; i < this.results.length; i++){
+		rxnTimes.push(this.results[i].reactionTime);
+	}
+	var n = rxnTimes.length
+	var zeroData = Array.apply(null, new Array(n)).map(Number.prototype.valueOf,0);
+	var barW = 540/n,
+			barH = 300;
+			
+			
+	var y = d3.scale.linear()
+						.domain([0, d3.max(rxnTimes)])
+						.rangeRound([0, barH])
+	
+	var chart = d3.select('.results').append('svg')
+													.attr('width', 540)
+													.attr('height', 300)
+		
+	var bar = chart.selectAll('g')
+				.data(rxnTimes)
+				.enter().append("g")
+				.attr("transform", function(d, i){ return "translate(" + i * barW + ", 0)"; });
+				
+	bar.append("rect")
+			.attr("y", function(d){ return y(d);})
+			.attr("height", function(d){ console.log(300 - y(d)); return 300 - y(d);})
+			.attr("width", barW - 1)
+			
+				
 }
 
 View.prototype.run = function(){
