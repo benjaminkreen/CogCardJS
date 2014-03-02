@@ -1,7 +1,6 @@
 $(document).ready(function() {
 
   var v = new View();
-	v.rule = new Rule();
   v.run();
 
   $(this).keydown(function(event) {
@@ -10,18 +9,18 @@ $(document).ready(function() {
 });
 
 cardIDs = ['#left', '#top', '#right']
+RULES = _.shuffle(["COLOR", "NUMBER", "SHAPE"])
 
 function Rule(options){
 	var options = options || {hidden: false};
-	var RULES = ["COLOR", "NUMBER", "SHAPE"]
-	this.rule = _.sample(RULES),
-	this.hidden = options.hidden
+	this.rule = options.rule;
+	this.hidden = options.hidden;
 }
 
 
 function View (){
-	this.trial = new Trial().setTrial();
-	this.results = []
+	this.results = [];
+	this.gameOver = false
 }
 
 View.prototype.handleKeyEvent = function(event){
@@ -73,13 +72,7 @@ View.prototype.validateResponse = function(card){
 	}	
 	var res =  new Result(resOptions);
 	this.results.push(res);
-	
-	if(this.results.length < 10){
-		this.trial = new Trial().setTrial()
-		this.render();
-	} else {
-		this.showResults()
-	}
+	this.run()
 }
 
 View.prototype.showResults = function(){
@@ -104,20 +97,39 @@ View.prototype.showResults = function(){
 													.attr('height', 300)
 		
 	var bar = chart.selectAll('g')
-				.data(rxnTimes)
+				.data(this.results)
 				.enter().append("g")
 				.attr("transform", function(d, i){ return "translate(" + i * barW + ", 0)"; });
 				
 	bar.append("rect")
-			.attr("y", function(d){ return y(d);})
-			.attr("height", function(d){ console.log(300 - y(d)); return 300 - y(d);})
+			.style("fill", "magenta")
+			.attr("y", function(d){ return 300 - y(d.reactionTime);})
+			.attr("height", function(d){ return y(d.reactionTime);})
 			.attr("width", barW - 1)
 			
 				
 }
 
 View.prototype.run = function(){
-	this.render();
+	switch(this.results.length){
+	case(0):
+		alert("Welcome to WCST.js\n Follow the matching rule by using 'w', 'a' and 'd'");
+		this.trial = new Trial().setTrial();		
+		this.rule = new Rule({rule:RULES[0], hidden:false});
+		break;
+	case(7):
+		this.rule = new Rule({rule:RULES[1], hidden:false});
+		break;
+	case(14):
+		this.rule = new Rule({rule:RULES[2], hidden:false})
+		break;
+	}
+	if(this.results.length < 21){
+		this.trial = new Trial().setTrial()
+		this.render()
+	} else {
+		this.showResults()
+	}
 }
 
 View.prototype.erase = function(){
@@ -129,6 +141,8 @@ View.prototype.erase = function(){
 View.prototype.render = function(){
 	if(! this.rule.hidden){
 		$('#rules').text("Match by " + this.rule.rule);
+	} else {
+		$('#rules').text(' ')
 	}
 	this.erase();
 	for(var i = 0; i < 3; i++){
